@@ -1,0 +1,34 @@
+.header {
+  text-align: center;
+  font-weight: bold;
+  color: #20b2aa;
+}
+
+body {
+  font-family: 'Terminal';
+}
+
+.main p {
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+button {
+  background-color: #00ced1;
+  color: #fff;
+  display: inline-block; 
+  display: inline;
+}
+
+.border {
+  border-bottom-style: solid;
+  border-color: #00ced1;
+}
+
+.text-box1 {
+  padding: 10px;
+  margin: 10px 200px 10px 10px;
+  border: 1px solid #00ced1;
+  border-radius: 4px;
+}
+
