@@ -55,7 +55,7 @@ def print_html():
     print( source )
 
 def print_messages():
-    sql = "select * from message_list"
+    sql = "select * from message_list order by id desc"
     cursor.execute( sql )
 
     rows = cursor.fetchall()
@@ -66,10 +66,17 @@ def print_messages():
           <p>{message}</p>
           <p align="right">{date}</p>
         </div>
+        <div class="delete">
+           <form  method="post" action="">
+           <input type="hidden" name="method" value="delete">
+           <input type="hidden" name="delete_id" value="{delete_id}">
+           <input type="submit" value="削除"></form>
+        </div>
         </body>
         </html>
         """ ).format( name = row[ 'name' ],
             message = row[ 'message' ],
+            delete_id = row[ 'id' ],
             date = row[ 'date' ]
         )
         print( source )
@@ -81,6 +88,7 @@ def insert_method():
     
 
 def search_method():
+    print( search + ' 検索結果' )
     sql =  "select * from  message_list where message like '%%%s%%'" 
     cursor.execute( sql % search )
     rows = cursor.fetchall()
@@ -96,24 +104,32 @@ def search_method():
         """ ).format( name = row[ 'name' ],
             message = row[ 'message' ],
             date = row[ 'date' ])
-        print( source )    
+        print( source ) 
+
+def delete_method():
+    print('削除されました')    
+    sql = 'delete from message_list where id=%s'
+    cursor.execute( sql, ( delete_id, ) )
+    connection.commit()
+    print_messages()
 
 def main():
 
     print_headers()
     print_html()
     
-    global name, message, search
+    global name, message, search, delete_id
     name = form.getvalue('u_name')
     message = form.getvalue('message')
     search = form.getvalue('search')
+    delete_id = form.getvalue("delete_id")
 
     global connection, cursor
 
     connection = MySQLdb.connect(
     host='localhost',
     user='root',
-    passwd='',
+    passwd='ChaPan0022!',
     db='message_list',
     charset='utf8')
     cursor = connection.cursor( MySQLdb.cursors.DictCursor )
@@ -125,13 +141,15 @@ def main():
 
     elif 'search' in form:
         search_method()
-   
+
+    elif 'delete_id' in form:
+        delete_method()
+
     else:
         print_messages()
      
     cursor.close()
     connection.close()
-	    
 
 if __name__ == "__main__":
     main()

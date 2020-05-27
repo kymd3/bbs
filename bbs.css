@@ -32,3 +32,9 @@ button {
   border-radius: 4px;
 }
 
+.delete {
+ display: inline-block;
+ display: inline;
+ background-color: #00ced1;
+ color: #fff;
+}
