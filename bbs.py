@@ -129,7 +129,7 @@ def main():
     connection = MySQLdb.connect(
     host='localhost',
     user='root',
-    passwd='ChaPan0022!',
+    passwd='',
     db='message_list',
     charset='utf8')
     cursor = connection.cursor( MySQLdb.cursors.DictCursor )
