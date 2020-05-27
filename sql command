@@ -1,0 +1,7 @@
+CREATE DATABASE message_list;
+USE message_list;
+CREATE TABLE 'message_list' (
+'id' int(11) NOT NULL AUT_INCREMENT PRIMARY KEY,
+'name' varchar(255) NOT NULL,
+'message' varchar(255) NOT NULL,
+'date' timestamp DEFAULT CURRENT_TIMESTAMP);
