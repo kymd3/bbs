@@ -1,0 +1,4 @@
+
+AddHandler cgi-script .py .cgi
+#Options +Indexes FollowSymLinks ExecCGI
+

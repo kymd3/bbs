@@ -26,15 +26,8 @@ button {
 }
 
 .text-box1 {
-  padding: 10px;
-  margin: 10px 200px 10px 10px;
+  padding: 5px;
+  margin: 5px 200px 5px 5px;
   border: 1px solid #00ced1;
   border-radius: 4px;
-}
-
-.delete {
- display: inline-block;
- display: inline;
- background-color: #00ced1;
- color: #fff;
 }

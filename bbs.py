@@ -1,27 +1,18 @@
 #!/usr/bin/python3
 # coding: utf-8
 
-
 import io
 import cgi
 import sys
-import cgitb
-cgitb.enable()
-
 import textwrap
-
+import settings
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf-8')
-
 version = sys.version
 path = sys.path
 import MySQLdb
 
- 
-
 form = cgi.FieldStorage()
 
-
-    
 def print_headers():
     print( "Content-type: text/html; charset=utf-8" )
     print( "" )
@@ -65,13 +56,10 @@ def print_messages():
           <p>{name}</p>
           <p>{message}</p>
           <p align="right">{date}</p>
-        </div>
-        <div class="delete">
            <form  method="post" action="">
            <input type="hidden" name="method" value="delete">
            <input type="hidden" name="delete_id" value="{delete_id}">
-           <input type="submit" value="削除"></form>
-        </div>
+           <input type="submit" value="削除" style="background-color:#00ced1;color:#fff;" ></form></div>
         </body>
         </html>
         """ ).format( name = row[ 'name' ],
@@ -122,15 +110,15 @@ def main():
     name = form.getvalue('u_name')
     message = form.getvalue('message')
     search = form.getvalue('search')
-    delete_id = form.getvalue("delete_id")
+    delete_id = form.getvalue('delete_id')
 
     global connection, cursor
 
     connection = MySQLdb.connect(
-    host='localhost',
-    user='root',
-    passwd='',
-    db='message_list',
+    host= settings.host,
+    user= settings.user,
+    passwd= settings.passwd,
+    db= settings.db,
     charset='utf8')
     cursor = connection.cursor( MySQLdb.cursors.DictCursor )
 
@@ -153,3 +141,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
