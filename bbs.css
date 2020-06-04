@@ -31,3 +31,11 @@ button {
   border: 1px solid #00ced1;
   border-radius: 4px;
 }
+
+.reply button {
+  background-color: #00ced1;
+  color: #fff;
+  display: inline-block; 
+  display: inline;
+}
+
