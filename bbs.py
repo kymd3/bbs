@@ -19,6 +19,7 @@ def print_headers():
     
 
 def print_html():
+    #投稿入力ページHTML
     source = textwrap.dedent( """
     <head>
     <meta http-equiv="content-type" charset="utf-8">
@@ -46,59 +47,89 @@ def print_html():
      <hr class="border"/>""" )
     print( source )
 
+
 def print_posts():
+    #投稿内容出力
     sql = "select * from post_list order by post_id desc"
     cursor.execute( sql )
-
     rows = cursor.fetchall()
     for row in rows:
+        sql = "select * from reply where post_id = " + str(row[ 'post_id' ])
+        cursor.execute( sql )
+        rows = cursor.fetchall()
         source = textwrap.dedent( """
         <div style="padding-bottom:0px;margin-bottom:0px;" class="text-box1">
-          <span>{name}</span>
+          <font color="#5f9ea0"><span style="margin-right:10px;">{name}</span></font>
+          <span>{date}</span><br>
           <span>{post}</span><br>
-          <span align="right">{date}</span>
+           <div style="display:inline-flex">
+          <font size="2"><span style="margin-right:5px;">返信{reply_count}件</span></font>
            <form  method="reply" action="">
            <input type="hidden" name="reply_method" value="reply_method">
            <input type="hidden" name="post_id" value="{post_id}">
-           <input type="submit" value="返信する" style="background-color:#00ced1;color:#fff;display:inline-block;" ></form>
+           <input type="submit" value="返信する" style="background-color:#00ced1;color:#fff;display:inline-block;margin-right:10px;"" ></form>
            <form  method="post" action="">
            <input type="hidden" name="post_method" value="delete_id">
            <input type="hidden" name="delete_id" value="{delete_id}">
-           <input  type="submit"  value="削除" style="background-color:#00ced1;color:#fff;display:inline-block;" ></form></div>
+           <input type="submit" value="削除" style="background-color:#ffa07a;color:#fff;" ></div>
+           </form></div>
         </body>
         """ ).format( name = row[ 'name' ],
             post = row[ 'post' ],
             delete_id = row[ 'post_id' ],
             date = row[ 'date' ],
-            post_id = row[ 'post_id' ] )
+            post_id = row[ 'post_id' ],
+            reply_count = str(len(rows)) )
         print( source )
 
 def post_methods():
     if 'u_name' in form and 'post' in form:
+        #投稿機能
         print( '<p>送信されました</p>' )
         sql = 'insert into post_list ( name, post ) values ( %s, %s )'
         cursor.execute( sql, ( name, post ) )
         connection.commit()
         print_posts()
-
-    elif 'search' in form:
-        search_method()
+        source = textwrap.dedent( '''
+        <html><head>
+          <meta http-equiv="refresh" content="2; url=./bbs.py">
+          </head></html>''' )
+        print( source )
 
     elif 'delete_id' in form:
-        print('<p>削除されました</p>')    
+        #投稿削除機能
+        print('<p>削除されました</p>')
         sql = 'delete from post_list where post_id=%s'
         cursor.execute( sql, ( delete_id, ) )
         connection.commit()
         print_posts()
+        source = textwrap.dedent( '''
+        <html><head>
+          <meta http-equiv="refresh" content="2; url=./bbs.py">
+          </head></html>''' )
+        print( source )
+
+    elif 'search' in form:
+        search_method()
+        print( """<a href="http://192.168.3.222/~kyamada/bbs.py">ホームに戻る</a>""" )          
 
     else:
+        #入力がされなかった場合
         print('<p>入力してください</p>')
         print_posts()
+        source = textwrap.dedent( '''
+        <html><head>
+          <meta http-equiv="refresh" content="2; url=./bbs.py">
+          </head></html>''' )
+        print( source )
+
 
 def search_method():
+    #検索機能
     print( search + ' 検索結果' )
     sql =  "select * from  post_list where post like '%%%s%%'" 
     cursor.execute( sql % search )
+    
     rows = cursor.fetchall()
     for row in rows:
         source = textwrap.dedent( """
@@ -115,16 +146,16 @@ def search_method():
         print( source ) 
 
 def print_reply_html():
+    #返信入力ページHTML
     sql =  "select * from  post_list where post_id=%s" 
     cursor.execute( sql, ( post_id, ) )
     rows = cursor.fetchall()
     for row in rows:
         source = textwrap.dedent( """
     <div style="padding:5px;margin:5px 200px 5px 5px;border:1px solid #00ced1;border-radius:4px;">
-     <span style="display:inline">{name}</span>
-     <span style="display:inline">{post}</span><br>
-     <span>{date}</span>
-    </div>
+     <font color="#5f9ea0"><span style="margin-right:10px">{name}</span></font>
+     <span>{date}</span><br>
+     <span>{post}</span></div>
     <div>
     <p><font size="3">この投稿に返信する</font></p>
      <form method="POST">
@@ -141,19 +172,21 @@ def print_reply_html():
 
 
 def print_replies():
-    sql = "select * from reply order by reply_id desc"
-    cursor.execute( sql )
+    #返信内容出力
+    sql = "select * from reply where post_id=%s order by reply_id desc"
+    cursor.execute( sql, ( post_id, ))
     rows = cursor.fetchall()
     for row in rows:
         source = textwrap.dedent( """
-        <div class="text-box1">
-          <p>{replyer_name}</p>
-          <p>{post}</p>
-          <p align="right">{date}</p>
+        <div style="padding:5px;margin: 5px 200px 5px 5px;border:1px solid #00ced1;border-radius:4px;">
+          <font color="#5f9ea0"><span style="margin-right:10px;">{replyer_name}</span></font>
+          <span>{date}</span><br>
+          <span style="margin-right:20px;">{post}</span>
+           <div style="display:inline-flex">
            <form  method="post" action="">
            <input type="hidden" name="reply_method" value="delete_reply">
            <input type="hidden" name="delete_reply" value="{reply_id}">
-           <input type="submit" value="削除" style="background-color:#00ced1;color:#fff;" ></form></div>
+           <input type="submit" value="削除" style="background-color:#ffa07a;color:#fff;display:inline-block;display:inline;ne;" ></form></div></div>
         </body>
         """ ).format( replyer_name = row[ 'replyer_name' ],
             post = row[ 'post' ],
@@ -162,22 +195,35 @@ def print_replies():
 
         print( source )
 
-#def reply_methods():
- #   if 'replyer_name' in form and 'reply_message' in form:
-  #      print( '<p>送信されました</p>' )
-   #     sql = 'insert into reply( post_id, replyer_name, post ) values( %s, %s, %s )'
-    #    cursor.execute( sql, ( post_id, replyer_name, reply_message ) )
-     #   connection.commit()
-      #  print_replies()
+def reply_methods():
+    if 'replyer_name' in form and 'reply_message' in form:
+        #返信機能
+        print( '<p>送信されました</p>' )
+        sql = 'insert into reply( post_id, replyer_name, post ) values( %s, %s, %s )'
+        cursor.execute( sql, ( post_id, replyer_name, reply_message ) )
+        connection.commit()
+        print_replies()
 
-#    else:
- #       print_replies()  
-  #      print('222')
+    elif 'delete_reply' in form:
+        #返信削除機能
+        print('<p>削除されました</p>')    
+        sql = 'delete from reply where reply_id=%s'
+            
+        cursor.execute( sql, ( reply_id, ) )
+        connection.commit()
+        print_replies()
 
+    else:
+        print_replies()
+ 
+        print( """<a href="http://192.168.3.222/~kyamada/bbs.py">ホームに戻る</a>""" )          
+           
 def main():
     
     print_headers()
     print( """<!DOCTYPE html><html lang="ja">""" )
+
+    #フォーム情報受け取り、変数に格納
     global name, post, search, delete_id, post_id, replyer_name, reply_message, reply_id
     name = form.getvalue('u_name')
     post = form.getvalue('post')
@@ -187,9 +233,9 @@ def main():
     replyer_name = form.getvalue('replyer_name')
     reply_message = form.getvalue('reply_message')
     reply_id = form.getvalue('delete_reply')
-    print(form)
-    global connection, cursor
 
+    #Mysqlに接続
+    global connection, cursor
     connection = MySQLdb.connect(
     host= settings.host,
     user= settings.user,
@@ -203,26 +249,8 @@ def main():
         post_methods()
 
     elif 'reply_method' in form:
-        if 'replyer_name' in form and 'reply_message' in form:
-            print_reply_html()
-            print( '<p>送信されました</p>' )
-            sql = 'insert into reply( post_id, replyer_name, post ) values( %s, %s, %s )'
-            cursor.execute( sql, ( post_id, replyer_name, reply_message ) )
-            connection.commit()
-            print_replies()
-
-        elif 'delete_reply' in form:
-            print_reply_html()
-            print('<p>削除されました</p>')    
-            sql = 'delete from reply where reply_id=%s'
-            
-            cursor.execute( sql, ( reply_id, ) )
-            connection.commit()
-            print_replies()
-            
-        else:
-            print_reply_html()
-            print_replies()
+        print_reply_html()
+        reply_methods()
 
     else:
         print_html()
