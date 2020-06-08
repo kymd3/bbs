@@ -33,12 +33,12 @@ def print_html():
     <p><font size="5">ひとこと掲示板</font></p>
     </div>
      <div class="main">
-      <form post_method="POST"><p><font size="4">ニックネーム</font></p><input type="textbox" name="u_name" maxlength="20" /><br>
+      <form method="post"><p><font size="4">ニックネーム</font></p><input type="textbox" name="u_name" maxlength="20" /><br>
       <p><font size="4">ひとことメッセージ</p><textarea name="post" /></textarea>
-      <input type="hidden" name="post_method" value="post">
+      <input type="hidden" name="method" value="post_method">
       <button type="submit">送信</button>
      </form>
-     <form post_method="POST">
+     <form method="post">
       <p><font size="4">メッセージ検索</font></p><textarea name="search" value=""></textarea>
       <input type="hidden" name="post_method" value="search">
       <button type="submit">検索</button>
@@ -64,12 +64,12 @@ def print_posts():
           <span>{post}</span><br>
            <div style="display:inline-flex">
           <font size="2"><span style="margin-right:5px;">返信{reply_count}件</span></font>
-           <form  method="reply" action="">
-           <input type="hidden" name="reply_method" value="reply_method">
+           <form  method="post" action="">
+           <input type="hidden" name="method" value="reply_method">
            <input type="hidden" name="post_id" value="{post_id}">
            <input type="submit" value="返信する" style="background-color:#00ced1;color:#fff;display:inline-block;margin-right:10px;"" ></form>
            <form  method="post" action="">
-           <input type="hidden" name="post_method" value="delete_id">
+           <input type="hidden" name="method" value="post_method">
            <input type="hidden" name="delete_id" value="{delete_id}">
            <input type="submit" value="削除" style="background-color:#ffa07a;color:#fff;" ></div>
            </form></div>
@@ -158,16 +158,18 @@ def print_reply_html():
      <span>{post}</span></div>
     <div>
     <p><font size="3">この投稿に返信する</font></p>
-     <form method="POST">
+     <form method="post">
      <p style="padding-bottom:0px;margin-bottom:0px;"><font size="4">ニックネーム</font></p>
-     <input type="hidden" name="reply_method" value="">
+     <input type="hidden" name="method" value="reply_method">
+     <input type="hidden" name="post_id" value="{post_id}">
      <input type="textbox" name="replyer_name" maxlength="20" /><br>
      <p style="padding-bottom:0px;margin-bottom:0px;"><font size="4">メッセージ</p><textarea name="reply_message" /></textarea>
      <button style="background-color:#00ced1;color:#fff;" type="submit">送信</button></div></form>
     <hr style="border-bottom-style:solid;border-color:#00ced1;" />
       """ ).format(name = row[ 'name' ],
         post = row[ 'post' ],
-        date = row[ 'date' ])
+        date = row[ 'date' ],
+        post_id = row[ 'post_id' ])
         print( source )
 
 
@@ -184,15 +186,17 @@ def print_replies():
           <span style="margin-right:20px;">{post}</span>
            <div style="display:inline-flex">
            <form  method="post" action="">
-           <input type="hidden" name="reply_method" value="delete_reply">
+           <input type="hidden" name="method" value="reply_method">
            <input type="hidden" name="delete_reply" value="{reply_id}">
+           <input type="hidden" name="post_id" value="{post_id}">
            <input type="submit" value="削除" style="background-color:#ffa07a;color:#fff;display:inline-block;display:inline;ne;" ></form></div></div>
         </body>
         """ ).format( replyer_name = row[ 'replyer_name' ],
             post = row[ 'post' ],
             date = row[ 'date' ],
-            reply_id = row[ 'reply_id' ] )
-
+            reply_id = row[ 'reply_id' ],
+            post_id = row[ 'post_id' ]
+            )
         print( source )
 
 def reply_methods():
@@ -208,7 +212,6 @@ def reply_methods():
         #返信削除機能
         print('<p>削除されました</p>')    
         sql = 'delete from reply where reply_id=%s'
-            
         cursor.execute( sql, ( reply_id, ) )
         connection.commit()
         print_replies()
@@ -216,7 +219,7 @@ def reply_methods():
     else:
         print_replies()
  
-        print( """<a href="http://192.168.3.222/~kyamada/bbs.py">ホームに戻る</a>""" )          
+    print( """<a href="./bbs.py">ホームに戻る</a>""" )          
            
 def main():
     
@@ -243,19 +246,19 @@ def main():
     db= settings.db,
     charset='utf8')
     cursor = connection.cursor( MySQLdb.cursors.DictCursor )
-
-    if 'post_method' in form:
+    
+    method = form.getvalue('method')
+    if method == 'post_method':
         print_html()
         post_methods()
 
-    elif 'reply_method' in form:
+    elif method == 'reply_method':
         print_reply_html()
         reply_methods()
 
     else:
         print_html()
         print_posts()
-
     print( "</html>" )
     cursor.close()
     connection.close()
