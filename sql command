@@ -1,7 +1,18 @@
 CREATE DATABASE message_list;
-USE message_list;
-CREATE TABLE 'message_list' (
-'id' int(11) NOT NULL AUT_INCREMENT PRIMARY KEY,
-'name' varchar(255) NOT NULL,
-'message' varchar(255) NOT NULL,
-'date' timestamp DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE `post_list` (
+  `post_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `post` varchar(255) DEFAULT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`post_id`))
+  
+  CREATE TABLE `reply` (
+  `reply_id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_id` int(11) NOT NULL,
+  `replyer_name` varchar(255) NOT NULL,
+  `post` varchar(255) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`reply_id`),
+  KEY `post_id` (`post_id`),
+  CONSTRAINT `reply_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post_list` (`post_id`) ON DELETE CASCADE ON UPDATE CASCADE
+)
