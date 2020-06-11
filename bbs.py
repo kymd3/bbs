@@ -40,6 +40,7 @@ def print_html():
      </form>
      <form method="post">
       <p><font size="4">メッセージ検索</font></p><textarea name="search" value=""></textarea>
+      <input type="hidden" name="method" value="post">
       <input type="hidden" name="post_method" value="search">
       <button type="submit">検索</button>
      </form>
@@ -111,7 +112,7 @@ def post_methods():
 
     elif 'search' in form:
         search_method()
-        print( """<a href="http://192.168.3.222/~kyamada/bbs.py">ホームに戻る</a>""" )          
+        print( """<a href="./bbs.py">ホームに戻る</a>""" )          
 
     else:
         #入力がされなかった場合
