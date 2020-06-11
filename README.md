@@ -18,7 +18,21 @@ CGIで実行する、Python + MySQL + HTML + CSS のひと言掲示板です。
 ## Install
   
 for Ubuntu  
-pipのインストール  
-$ sudo apt install python3-pip  
-Mysqlclientのインストール  
+1. pipのインストール  
+```bash
+$ sudo apt install python3-pip
+```
+2. Mysqlclientのインストール  
+```bash
 $ sudo apt-get install python-pip python-dev libmysqlclient-dev
+```
+
+for Centos
+1. python3-develのインストール
+```bash
+$ sudo yum install python3-devel
+```
+2. Mysqlclientのインストール
+```bash
+$ sudo pip3 install mysqlclient
+```
