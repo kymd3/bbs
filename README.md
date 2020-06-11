@@ -27,7 +27,7 @@ $ sudo apt install python3-pip
 $ sudo apt-get install python-pip python-dev libmysqlclient-dev
 ```
 
-for Centos
+for Centos7
 1. python3-develのインストール
 ```bash
 $ sudo yum install python3-devel
