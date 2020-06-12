@@ -36,3 +36,13 @@ $ sudo yum install python3-devel
 ```bash
 $ sudo pip3 install mysqlclient
 ```
+## About .env.example
+
+以下を自分の情報に書き換えてください。
+```bash
+db_host=[yourhost]
+db_user=[yourname]
+db_pass=[yourpass]
+db_name=[yourdb]
+```
+私のコードではファイル名を .env にする必要があります。
