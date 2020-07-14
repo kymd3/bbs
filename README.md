@@ -1,7 +1,7 @@
 
-# newRead
+# bbs
 
-ひと言掲示板、bbs
+ひと言掲示板
 
 ## Description
 
